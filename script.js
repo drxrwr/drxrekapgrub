@@ -1,60 +1,90 @@
 // Fitur 1: Urutan Nama Grup
 function generateNames() {
-  const input = document.getElementById("inputText").value.replace(/§/g, " ");
-  const addColon = document.getElementById("addColon").checked;
+  const input = document.getElementById("inputText").value;
   const output = document.getElementById("outputText");
 
-  const regex = /(.*?)(\d+)(.*?)/; // Menangkap teks, angka, teks
+  const regex = /^(.*?)§?(\d+)-(\d+)§?(.*?)$/;
   const match = input.match(regex);
 
   if (!match) {
-    alert("Format tidak sesuai. Gunakan format: teks§angka§teks atau angka terlebih dahulu.");
+    alert("Format tidak sesuai. Gunakan format: teks angka-teks atau angka-teks-angka.");
     return;
   }
 
-  const prefix = match[1].trim();
-  const number = parseInt(match[2], 10);
-  const suffix = match[3].trim();
+  const prefix = match[1].trim().replace(/§/g, " ");
+  const start = parseInt(match[2], 10);
+  const end = parseInt(match[3], 10);
+  const suffix = match[4].trim().replace(/§/g, " ");
+  let result = "";
 
-  const result = `${prefix}${number}${suffix}${addColon ? " :" : ""}\n`;
-  output.value = result;
+  for (let i = start; i <= end; i++) {
+    result += `${prefix}${i}${suffix}\n`;
+  }
+
+  output.value = result.trim();
 }
 
-function copyText(elementId) {
-  const text = document.getElementById(elementId).value;
-  navigator.clipboard.writeText(text).then(() => {
-    alert("Teks berhasil disalin!");
-  });
+// Fitur 2: Masukkan File
+function processFile() {
+  const fileInput = document.getElementById("fileInput");
+  const fileOutput = document.getElementById("fileOutput");
+
+  if (fileInput.files.length === 0) {
+    alert("Harap pilih file terlebih dahulu.");
+    return;
+  }
+
+  const file = fileInput.files[0];
+  const reader = new FileReader();
+
+  reader.onload = function () {
+    fileOutput.value = reader.result;
+  };
+
+  reader.onerror = function () {
+    alert("Gagal membaca file.");
+  };
+
+  reader.readAsText(file);
 }
 
-// Fitur 3: Proses Gambar dan OCR
+// Fitur 3: Foto Profil Grup
 function processImage() {
   const imageInput = document.getElementById("imageInput");
   const imageOutput = document.getElementById("imageOutput");
 
-  if (imageInput.files.length > 0) {
-    const file = imageInput.files[0];
-    const reader = new FileReader();
-
-    reader.onload = function (e) {
-      Tesseract.recognize(e.target.result, "eng", {
-        logger: (info) => console.log(info),
-      })
-        .then(({ data: { text } }) => {
-          const lines = text.trim().split("\n");
-          const groupLine = lines.find((line) => /\d+.*:.*\d+/.test(line)) || "";
-          const result = groupLine.replace(/(\d+.*\d+):.*(\d+)/, "$1 : $2");
-
-          imageOutput.value += `${result}\n`; // Menambahkan teks di bawahnya
-        })
-        .catch((error) => {
-          console.error("Error OCR:", error);
-          imageOutput.value += "Error membaca gambar. Silakan coba lagi.\n";
-        });
-    };
-
-    reader.readAsDataURL(file);
-  } else {
-    alert("Pilih gambar terlebih dahulu!");
+  if (imageInput.files.length === 0) {
+    alert("Harap pilih gambar terlebih dahulu.");
+    return;
   }
+
+  const file = imageInput.files[0];
+  Tesseract.recognize(file, "eng").then(({ data: { text } }) => {
+    const lines = text.trim().split("\n").filter((line) => line !== "");
+    const result = lines.map((line) => {
+      const match = line.match(/^(.*?)\s*[:|-]\s*(\d+)/);
+      return match ? `${match[1]} : ${match[2]}` : line;
+    });
+
+    imageOutput.value += result.join("\n") + "\n";
+  }).catch((err) => {
+    alert("Gagal memproses gambar.");
+    console.error(err);
+  });
+}
+
+function continueImage() {
+  alert("Lanjutkan menambahkan hasil berikutnya.");
+}
+
+function resetText(elementId) {
+  document.getElementById(elementId).value = "";
+}
+
+// Salin ke Clipboard
+function copyText(elementId) {
+  const textarea = document.getElementById(elementId);
+  textarea.select();
+  document.execCommand("copy");
+  alert("Teks berhasil disalin.");
 }
