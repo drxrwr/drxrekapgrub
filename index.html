@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generator Tools</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js/dist/tesseract.min.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Generator Tools</h1>
+  </header>
+  <main>
+    <!-- Fitur 1: Urutan Nama Grup -->
+    <section>
+      <h2>Fitur 1: Urutan Nama Grup</h2>
+      <input type="text" id="inputText" placeholder="Masukkan format, contoh: ikan (3-8) kecoak">
+      <button onclick="generateNames()">Generate</button>
+      <input type="checkbox" id="addColon"> Tambahkan Tanda (:)
+      <textarea id="outputText" placeholder="Hasil akan muncul di sini"></textarea>
+      <button onclick="copyText('outputText')">Salin</button>
+    </section>
+
+    <!-- Fitur 2: Masukkan File -->
+    <section>
+      <h2>Fitur 2: Masukkan File</h2>
+      <input type="file" id="fileInput" accept=".txt,.vcf">
+      <button onclick="processFile()">Generate</button>
+      <textarea id="fileOutput" placeholder="Hasil file akan muncul di sini"></textarea>
+      <button onclick="copyText('fileOutput')">Salin</button>
+    </section>
+
+    <!-- Fitur 3: Foto Profil Grup -->
+    <section>
+      <h2>Fitur 3: Foto Profil Grup</h2>
+      <input type="file" id="imageInput" accept="image/*" onchange="processImage()">
+      <img id="previewImage" alt="Preview Gambar" style="display:none;">
+      <textarea id="imageOutput" placeholder="Hasil OCR akan muncul di sini"></textarea>
+      <button onclick="continueImage()">Lanjutkan</button>
+      <button onclick="resetText('imageOutput')">Reset</button>
+    </section>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>
