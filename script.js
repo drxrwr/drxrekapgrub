@@ -1,85 +1,89 @@
-// Fitur Pertama
-function generateSequence() {
-  const input = document.getElementById("groupInput").value;
-  const output = document.getElementById("groupOutput");
-  output.value = ""; // Clear output
-
-  const match = input.match(/^(.*?)(\d+)-(\d+)(.*?)$/);
-  if (match) {
-    const prefix = match[1];
-    const start = parseInt(match[2]);
-    const end = parseInt(match[3]);
-    const suffix = match[4];
-
-    for (let i = start; i <= end; i++) {
-      output.value += `${prefix}${i}${suffix}\n`;
+// Fitur 1: Format Teks
+document.getElementById("processText").addEventListener("click", () => {
+  const input = document.getElementById("textInput").value;
+  const result = input.replace(/(\d+)-(\d+)/g, (_, start, end) => {
+    let output = "";
+    for (let i = parseInt(start); i <= parseInt(end); i++) {
+      output += input.replace(`${start}-${end}`, i) + "\n";
     }
-  } else {
-    output.value = "Format input tidak sesuai. Contoh: teks 1-5 teks.";
-  }
-}
+    return output.trim();
+  });
+  document.getElementById("textOutput").value = result;
+});
 
-// Fitur Kedua
-function processFile() {
+document.getElementById("addColon").addEventListener("click", () => {
+  const output = document.getElementById("textOutput").value;
+  const result = output
+    .split("\n")
+    .map(line => line + " :")
+    .join("\n");
+  document.getElementById("textOutput").value = result;
+});
+
+// Fitur 2: Upload File
+document.getElementById("uploadFile").addEventListener("click", () => {
   const fileInput = document.getElementById("fileInput");
-  const output = document.getElementById("fileOutput");
-  output.value = ""; // Clear output
-
-  if (fileInput.files.length > 0) {
-    const fileName = fileInput.files[0].name;
-    output.value = fileName.replace(/\.\w+$/, "");
+  if (fileInput.files.length === 0) {
+    alert("Silakan pilih file terlebih dahulu.");
+    return;
   }
-}
 
-// Fitur Ketiga
-function processImage() {
+  const file = fileInput.files[0];
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const content = e.target.result;
+    document.getElementById("fileOutput").value = content;
+  };
+  reader.readAsText(file);
+});
+
+// Fitur 3: OCR
+document.getElementById("processImage").addEventListener("click", async () => {
   const imageInput = document.getElementById("imageInput");
-  const previewImage = document.getElementById("previewImage");
-  const imageOutput = document.getElementById("imageOutput");
-
-  if (imageInput.files.length > 0) {
-    const file = imageInput.files[0];
-    const reader = new FileReader();
-
-    reader.onload = function (e) {
-      previewImage.src = e.target.result;
-      previewImage.style.display = "block";
-
-      Tesseract.recognize(e.target.result, "eng", {
-        logger: (info) => console.log(info),
-      })
-        .then(({ data: { text } }) => {
-          const match = text.match(/^(.*)\sGrup\s(\d+)\sanggota$/i);
-          if (match) {
-            imageOutput.value += `${match[1]} : ${match[2]}\n`;
-          } else {
-            imageOutput.value += "nama grup : \n";
-          }
-        })
-        .catch((error) => {
-          console.error("Error OCR:", error);
-          imageOutput.value += "nama grup : \n";
-        });
-    };
-
-    reader.readAsDataURL(file);
-  } else {
-    alert("Pilih gambar terlebih dahulu!");
+  if (imageInput.files.length === 0) {
+    alert("Silakan pilih gambar terlebih dahulu.");
+    return;
   }
-}
 
-function continueImage() {
-  document.getElementById("previewImage").style.display = "none";
+  const file = imageInput.files[0];
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    const imageData = e.target.result;
+    const worker = Tesseract.createWorker();
+    await worker.load();
+    await worker.loadLanguage('eng');
+    await worker.initialize('eng');
+
+    const { data: { text } } = await worker.recognize(imageData);
+    const groupNameMatch = text.match(/(Importante\s\w+)/i);
+    const memberCountMatch = text.match(/(\d+)\sanggota/i);
+
+    if (groupNameMatch && memberCountMatch) {
+      document.getElementById("ocrOutput").value = `${groupNameMatch[1]} : ${memberCountMatch[1]}`;
+    } else {
+      document.getElementById("ocrOutput").value = "Nama grup : ";
+    }
+
+    await worker.terminate();
+  };
+  reader.readAsDataURL(file);
+});
+
+// Tombol Salin
+document.getElementById("copyText").addEventListener("click", () => {
+  const output = document.getElementById("ocrOutput").value;
+  navigator.clipboard.writeText(output).then(() => {
+    alert("Teks berhasil disalin!");
+  });
+});
+
+// Tombol Reset
+document.getElementById("resetAll").addEventListener("click", () => {
+  document.getElementById("textInput").value = "";
+  document.getElementById("textOutput").value = "";
+  document.getElementById("fileOutput").value = "";
+  document.getElementById("ocrOutput").value = "";
+  document.getElementById("imagePreview").innerHTML = "";
   document.getElementById("imageInput").value = "";
-}
-
-function resetText(elementId) {
-  document.getElementById(elementId).value = "";
-}
-
-function copyText(elementId) {
-  const text = document.getElementById(elementId);
-  text.select();
-  document.execCommand("copy");
-  alert("Teks berhasil disalin!");
-}
+  document.getElementById("fileInput").value = "";
+});
