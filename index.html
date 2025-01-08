@@ -3,43 +3,44 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Generator Tools</title>
+  <title>Web Generator</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js/dist/tesseract.min.js"></script>
 </head>
 <body>
-  <header>
-    <h1>Generator Tools</h1>
-  </header>
-  <main>
-    <!-- Fitur 1: Urutan Nama Grup -->
+  <div class="container">
+    <h1>Web Generator</h1>
+
+    <!-- Fitur Pertama -->
     <section>
       <h2>Fitur 1: Urutan Nama Grup</h2>
-      <input type="text" id="inputText" placeholder="Masukkan format, contoh: ikan 1-3 kecoak">
-      <button onclick="generateNames()">Generate</button>
-      <textarea id="outputText" placeholder="Hasil akan muncul di sini"></textarea>
-      <button onclick="copyText('outputText')">Salin</button>
+      <input type="text" id="groupInput" placeholder="Masukkan pola teks, contoh: teks 1-5 teks">
+      <button onclick="generateSequence()">Generate</button>
+      <button onclick="resetText('groupOutput')">Reset</button>
+      <textarea id="groupOutput" placeholder="Hasil output akan muncul di sini"></textarea>
+      <button onclick="copyText('groupOutput')">Salin</button>
     </section>
 
-    <!-- Fitur 2: Masukkan File -->
+    <!-- Fitur Kedua -->
     <section>
-      <h2>Fitur 2: Masukkan File</h2>
-      <input type="file" id="fileInput" accept=".txt,.vcf,.csv">
-      <button onclick="processFile()">Generate</button>
-      <textarea id="fileOutput" placeholder="Hasil file akan muncul di sini"></textarea>
+      <h2>Fitur 2: Salin Nama File</h2>
+      <input type="file" id="fileInput" onchange="processFile()">
+      <textarea id="fileOutput" placeholder="Hasil nama file akan muncul di sini"></textarea>
       <button onclick="copyText('fileOutput')">Salin</button>
     </section>
 
-    <!-- Fitur 3: Foto Profil Grup -->
+    <!-- Fitur Ketiga -->
     <section>
-      <h2>Fitur 3: Foto Profil Grup</h2>
+      <h2>Fitur 3: Deteksi Nama Grup & Anggota</h2>
       <input type="file" id="imageInput" accept="image/*" onchange="processImage()">
-      <textarea id="imageOutput" placeholder="Hasil OCR akan muncul di sini"></textarea>
+      <img id="previewImage" style="display: none;" alt="Pratinjau Gambar">
+      <textarea id="imageOutput" placeholder="Hasil nama grup akan muncul di sini"></textarea>
+      <button onclick="copyText('imageOutput')">Salin</button>
       <button onclick="continueImage()">Lanjutkan</button>
       <button onclick="resetText('imageOutput')">Reset</button>
-      <button onclick="copyText('imageOutput')">Salin</button>
     </section>
-  </main>
+
+  </div>
   <script src="script.js"></script>
 </body>
 </html>
