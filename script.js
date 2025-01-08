@@ -1,90 +1,85 @@
-// Fitur 1: Urutan Nama Grup
-function generateNames() {
-  const input = document.getElementById("inputText").value;
-  const output = document.getElementById("outputText");
+// Fitur Pertama
+function generateSequence() {
+  const input = document.getElementById("groupInput").value;
+  const output = document.getElementById("groupOutput");
+  output.value = ""; // Clear output
 
-  const regex = /^(.*?)§?(\d+)-(\d+)§?(.*?)$/;
-  const match = input.match(regex);
+  const match = input.match(/^(.*?)(\d+)-(\d+)(.*?)$/);
+  if (match) {
+    const prefix = match[1];
+    const start = parseInt(match[2]);
+    const end = parseInt(match[3]);
+    const suffix = match[4];
 
-  if (!match) {
-    alert("Format tidak sesuai. Gunakan format: teks angka-teks atau angka-teks-angka.");
-    return;
+    for (let i = start; i <= end; i++) {
+      output.value += `${prefix}${i}${suffix}\n`;
+    }
+  } else {
+    output.value = "Format input tidak sesuai. Contoh: teks 1-5 teks.";
   }
-
-  const prefix = match[1].trim().replace(/§/g, " ");
-  const start = parseInt(match[2], 10);
-  const end = parseInt(match[3], 10);
-  const suffix = match[4].trim().replace(/§/g, " ");
-  let result = "";
-
-  for (let i = start; i <= end; i++) {
-    result += `${prefix}${i}${suffix}\n`;
-  }
-
-  output.value = result.trim();
 }
 
-// Fitur 2: Masukkan File
+// Fitur Kedua
 function processFile() {
   const fileInput = document.getElementById("fileInput");
-  const fileOutput = document.getElementById("fileOutput");
+  const output = document.getElementById("fileOutput");
+  output.value = ""; // Clear output
 
-  if (fileInput.files.length === 0) {
-    alert("Harap pilih file terlebih dahulu.");
-    return;
+  if (fileInput.files.length > 0) {
+    const fileName = fileInput.files[0].name;
+    output.value = fileName.replace(/\.\w+$/, "");
   }
-
-  const file = fileInput.files[0];
-  const reader = new FileReader();
-
-  reader.onload = function () {
-    fileOutput.value = reader.result;
-  };
-
-  reader.onerror = function () {
-    alert("Gagal membaca file.");
-  };
-
-  reader.readAsText(file);
 }
 
-// Fitur 3: Foto Profil Grup
+// Fitur Ketiga
 function processImage() {
   const imageInput = document.getElementById("imageInput");
+  const previewImage = document.getElementById("previewImage");
   const imageOutput = document.getElementById("imageOutput");
 
-  if (imageInput.files.length === 0) {
-    alert("Harap pilih gambar terlebih dahulu.");
-    return;
+  if (imageInput.files.length > 0) {
+    const file = imageInput.files[0];
+    const reader = new FileReader();
+
+    reader.onload = function (e) {
+      previewImage.src = e.target.result;
+      previewImage.style.display = "block";
+
+      Tesseract.recognize(e.target.result, "eng", {
+        logger: (info) => console.log(info),
+      })
+        .then(({ data: { text } }) => {
+          const match = text.match(/^(.*)\sGrup\s(\d+)\sanggota$/i);
+          if (match) {
+            imageOutput.value += `${match[1]} : ${match[2]}\n`;
+          } else {
+            imageOutput.value += "nama grup : \n";
+          }
+        })
+        .catch((error) => {
+          console.error("Error OCR:", error);
+          imageOutput.value += "nama grup : \n";
+        });
+    };
+
+    reader.readAsDataURL(file);
+  } else {
+    alert("Pilih gambar terlebih dahulu!");
   }
-
-  const file = imageInput.files[0];
-  Tesseract.recognize(file, "eng").then(({ data: { text } }) => {
-    const lines = text.trim().split("\n").filter((line) => line !== "");
-    const result = lines.map((line) => {
-      const match = line.match(/^(.*?)\s*[:|-]\s*(\d+)/);
-      return match ? `${match[1]} : ${match[2]}` : line;
-    });
-
-    imageOutput.value += result.join("\n") + "\n";
-  }).catch((err) => {
-    alert("Gagal memproses gambar.");
-    console.error(err);
-  });
 }
 
 function continueImage() {
-  alert("Lanjutkan menambahkan hasil berikutnya.");
+  document.getElementById("previewImage").style.display = "none";
+  document.getElementById("imageInput").value = "";
 }
 
 function resetText(elementId) {
   document.getElementById(elementId).value = "";
 }
 
-// Salin ke Clipboard
 function copyText(elementId) {
-  const textarea = document.getElementById(elementId);
-  textarea.select();
+  const text = document.getElementById(elementId);
+  text.select();
   document.execCommand("copy");
-  alert("Teks berhasil disalin.");
+  alert("Teks berhasil disalin!");
 }
