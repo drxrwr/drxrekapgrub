@@ -3,44 +3,36 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Web Generator</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="https://cdn.jsdelivr.net/npm/tesseract.js/dist/tesseract.min.js"></script>
+  <title>Tool OCR dan Format Teks</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div class="container">
-    <h1>Web Generator</h1>
+    <!-- Fitur 1: Format Teks -->
+    <h2>Fitur 1: Format Teks</h2>
+    <textarea id="textInput" placeholder="Masukkan teks..."></textarea>
+    <button id="processText">Proses</button>
+    <button id="addColon">Tambahkan ":"</button>
+    <textarea id="textOutput" readonly placeholder="Hasil output..."></textarea>
 
-    <!-- Fitur Pertama -->
-    <section>
-      <h2>Fitur 1: Urutan Nama Grup</h2>
-      <input type="text" id="groupInput" placeholder="Masukkan pola teks, contoh: teks 1-5 teks">
-      <button onclick="generateSequence()">Generate</button>
-      <button onclick="resetText('groupOutput')">Reset</button>
-      <textarea id="groupOutput" placeholder="Hasil output akan muncul di sini"></textarea>
-      <button onclick="copyText('groupOutput')">Salin</button>
-    </section>
+    <!-- Fitur 2: Upload File -->
+    <h2>Fitur 2: Upload File</h2>
+    <input type="file" id="fileInput" accept=".txt, .vcf">
+    <button id="uploadFile">Upload</button>
+    <textarea id="fileOutput" readonly placeholder="Hasil upload file akan muncul di sini..."></textarea>
 
-    <!-- Fitur Kedua -->
-    <section>
-      <h2>Fitur 2: Salin Nama File</h2>
-      <input type="file" id="fileInput" onchange="processFile()">
-      <textarea id="fileOutput" placeholder="Hasil nama file akan muncul di sini"></textarea>
-      <button onclick="copyText('fileOutput')">Salin</button>
-    </section>
+    <!-- Fitur 3: OCR -->
+    <h2>Fitur 3: OCR (Deteksi Nama Grup dan Anggota)</h2>
+    <input type="file" id="imageInput" accept="image/*">
+    <div id="imagePreview"></div>
+    <button id="processImage">Proses Gambar</button>
+    <textarea id="ocrOutput" readonly placeholder="Hasil OCR akan muncul di sini..."></textarea>
+    <button id="copyText">Salin</button>
 
-    <!-- Fitur Ketiga -->
-    <section>
-      <h2>Fitur 3: Deteksi Nama Grup & Anggota</h2>
-      <input type="file" id="imageInput" accept="image/*" onchange="processImage()">
-      <img id="previewImage" style="display: none;" alt="Pratinjau Gambar">
-      <textarea id="imageOutput" placeholder="Hasil nama grup akan muncul di sini"></textarea>
-      <button onclick="copyText('imageOutput')">Salin</button>
-      <button onclick="continueImage()">Lanjutkan</button>
-      <button onclick="resetText('imageOutput')">Reset</button>
-    </section>
-
+    <!-- Tombol Reset -->
+    <button id="resetAll">Reset Semua</button>
   </div>
+
   <script src="script.js"></script>
 </body>
 </html>
