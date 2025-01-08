@@ -1,49 +1,43 @@
 body {
   font-family: Arial, sans-serif;
-  background-color: #f0f4f7;
-  color: #333;
   margin: 0;
   padding: 0;
+  background-color: #e6ffe6;
+  color: #333;
 }
 
-header {
-  background-color: #4caf50;
-  color: white;
+.container {
+  max-width: 600px;
+  margin: 20px auto;
   padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  color: #2d862d;
   text-align: center;
 }
 
-main {
-  padding: 20px;
-}
-
 section {
-  margin-bottom: 30px;
-  padding: 15px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
 }
 
-h2 {
-  color: #4caf50;
-}
-
-input[type="text"], textarea, input[type="file"] {
+input, textarea, button {
+  display: block;
   width: 100%;
+  margin-bottom: 10px;
   padding: 10px;
-  margin: 10px 0;
-  border: 1px solid #ddd;
-  border-radius: 5px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 
 button {
-  padding: 10px 15px;
-  margin-right: 5px;
-  background-color: #4caf50;
+  background-color: #4CAF50;
   color: white;
   border: none;
-  border-radius: 5px;
   cursor: pointer;
 }
 
@@ -53,5 +47,9 @@ button:hover {
 
 textarea {
   height: 100px;
-  resize: none;
+}
+
+#previewImage {
+  max-width: 100%;
+  margin-bottom: 10px;
 }
